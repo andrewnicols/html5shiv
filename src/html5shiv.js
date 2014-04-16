@@ -133,7 +133,13 @@
     //   a 403 response, will cause the tab/window to crash
     // * Script elements appended to fragments will execute when their `src`
     //   or `text` property is set
-    return node.canHaveChildren && !reSkip.test(nodeName) && !node.tagUrn ? data.frag.appendChild(node) : node;
+    if (node.canHaveChildren && !reSkip.test(nodeName)) {
+        // Return a cloned copy of the shived node to ensure that it is not part
+        // of the DOM - this is in compliance with native createElement.
+        return data.frag.appendChild(node).cloneNode(true);
+    } else {
+        return node;
+    }
   }
 
   /**
